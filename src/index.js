@@ -1,32 +1,36 @@
-import Fastify from "fastify";
-import { Telegraf } from "telegraf";
+import express from "express";
+import TelegramBot from "node-telegram-bot-api";
 
-const app = Fastify({ logger: true });
+const app = express();
+const port = process.env.PORT || 8080;
 
-const BOT_TOKEN = "8582609346";
-const ADMIN_CHAT_ID = 8490375470:AAGpuHaX37fEKmpEU--Kx23-W36-ZBJh68o;
+const botToken = process.env.8490375470:AAGpuHaX37fEKmpEU--Kx23-W36-ZBJh68o
+const adminChatId = process.env.8582609346
 
-const bot = new Telegraf(BOT_TOKEN);
+const bot = new TelegramBot(botToken, { polling: false });
+app.use(express.json());
 
-// ✅ Webhook endpoint Telegram-a deyir: buraya mesaj göndər
-app.post("/webhook", async (req, reply) => {
-  await bot.handleUpdate(req.body);
-  reply.send({ ok: true });
+app.post("/telegram/webhook", (req, res) => {
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
 });
 
-// ✅ Telegram-a webhook URL təyin edirik
-bot.telegram.setWebhook(${process.env.RENDER_EXTERNAL_URL}/webhook);
-
-// ✅ Bot komandaları
-bot.start((ctx) => ctx.reply("Brat, sistem aktivdir ✅"));
-bot.command("status", (ctx) => ctx.reply("Status ✅ Sistem aktivdir, Brat."));
-bot.command("approve", (ctx) => ctx.reply("✅ Təsdiqləndi Brat."));
-bot.command("report", (ctx) => ctx.reply("📊 Hesabat: hər şey qaydasındadır."));
-
-// ✅ Server test route
-app.get("/", (req, reply) => {
-  reply.send("Agent API Brat ✅ Running");
+bot.onText(/\/start/, (msg) => {
+  bot.sendMessage(msg.chat.id, "🧠 Brat sistem aktivdir ✅ — komandaları gözləyirəm.");
 });
 
-// ✅ Serveri işə salmaq
-app.listen({ port: process.env.PORT || 3000, host: "0.0.0.0" });
+bot.on("message", async (msg) => {
+  const chatId = msg.chat.id;
+  const text = (msg.text || "").trim();
+
+  if (!text || text.startsWith("/")) return;
+
+  if (text.toLowerCase().includes("drive")) {
+    await bot.sendMessage(chatId, "📁 Drive əməliyyatı başlayır...");
+  } else {
+    await bot.sendMessage(chatId, "Səni eşidirəm, Zahid Brat 👂");
+  }
+});
+
+app.get("/", (_req, res) => res.send("Agent Brat işləyir ✅"));
+app.listen(port, () => console.log(Server running on port ${port}));
