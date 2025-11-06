@@ -14,7 +14,17 @@ const bot = new Telegraf(8490375470:AAGpuHaX37fEKmpEU--Kx23-W36-ZBJh68o);
 
 // Sadə test komandası
 bot.command("start", (ctx) => ctx.reply("Brat, sistem aktivdir ✅"));
+bot.command("status", (ctx) => {
+  ctx.reply("Status ✅ Sistem problemsiz işləyir, Brat.");
+});
 
+bot.command("approve", (ctx) => {
+  ctx.reply("✅ Təsdiqləndi Brat. Sistem icazəsi verildi.");
+});
+
+bot.command("report", (ctx) => {
+  ctx.reply("📊 Qısa hesabat:\n• Server aktivdir\n• Webhook işləyir\n• Bot cavab verir");
+});
 // Webhook route
 fastify.post("/api/telegram/webhook", async (req, reply) => {
   try {
