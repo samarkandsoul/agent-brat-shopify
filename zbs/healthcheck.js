@@ -4,7 +4,7 @@
 const fetch = require("node-fetch");
 
 // -----------------------------
-// GitHub API Check
+// GitHub API Check (REAL)
 // -----------------------------
 async function checkGitHub() {
     try {
@@ -13,7 +13,7 @@ async function checkGitHub() {
         });
 
         if (!response.ok) {
-            throw new Error(`GitHub API responded with: ${response.status}`);
+            throw new Error(`GitHub API responded with status: ${response.status}`);
         }
 
         return { service: "GitHub", status: "OK" };
@@ -30,7 +30,7 @@ async function checkRender() {
         const response = await fetch("https://api.render.com/health");
 
         if (!response.ok) {
-            throw new Error(`Render API status: ${response.status}`);
+            throw new Error(`Render API responded with status: ${response.status}`);
         }
 
         return { service: "Render", status: "OK" };
@@ -40,11 +40,16 @@ async function checkRender() {
 }
 
 // -----------------------------
-// Google Drive API Check (placeholder for now)
+// Google Drive API Check (REAL)
 // -----------------------------
 async function checkGoogle() {
     try {
-        // TODO: Add Google Drive API request later
+        const response = await fetch("https://www.googleapis.com/drive/v3/about?fields=kind");
+
+        if (!response.ok) {
+            throw new Error(`Google API responded with status: ${response.status}`);
+        }
+
         return { service: "Google Drive", status: "OK" };
     } catch (error) {
         return { service: "Google Drive", status: "ERROR", error: error.message };
@@ -52,11 +57,23 @@ async function checkGoogle() {
 }
 
 // -----------------------------
-// Telegram Bot API Check (placeholder for now)
+// Telegram Bot API Check (REAL)
 // -----------------------------
 async function checkTelegram() {
     try {
-        // TODO: Add Telegram API request later
+        // Minimal test using Telegram getMe endpoint
+        const telegramToken = process.env.TELEGRAM_BOT_TOKEN;
+
+        if (!telegramToken) {
+            throw new Error("Telegram token is missing");
+        }
+
+        const response = await fetch(`https://api.telegram.org/bot${telegramToken}/getMe`);
+
+        if (!response.ok) {
+            throw new Error(`Telegram API responded with status: ${response.status}`);
+        }
+
         return { service: "Telegram", status: "OK" };
     } catch (error) {
         return { service: "Telegram", status: "ERROR", error: error.message };
